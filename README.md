@@ -1,5 +1,5 @@
 ## Overview
-This Python application processes and summarizes text messages, utilizing Flask, SQLAlchemy, and OpenAI's GPT-4. It functions as a client to a Signal Messenger REST API server, specifically using `signal-cli-rest-api` to handle Signal messaging functionalities.
+The application periodically retrieves messages from a server, identifies specific commands (like /summary), and then uses OpenAI's GPT-4 model to generate summaries of these discussions. The summarized content is either printed for logging or sent back to a server. 
 
 ## Server Setup: `signal-cli-rest-api`
 Before running this application, you need to set up the `signal-cli-rest-api` server. This server acts as an intermediary, handling Signal messaging operations.
