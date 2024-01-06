@@ -26,6 +26,16 @@ curl -X POST -H "Content-Type: application/json" 'http://localhost:8080/v2/send'
 
 Replace `+4412345` with your Signal number and `+44987654` with the recipient's number.
 
+**Set Environment Variables**:
+   - Set the following environment variables for API keys and server URLs:
+     - `OPENAI_API_KEY`: Your OpenAI API key.
+     - `SERVER_URL_SEND`: URL to send messages.
+     - `SERVER_URL_RECEIVE`: URL to receive messages.
+     - `SERVER_USERNAME`: Username for server authentication.
+     - `SERVER_PASSWORD`: Password for server authentication.
+     - `GROUP_ID`: Group ID for filtering messages.
+     - `USER_NUMBER`: User number to send messages to.
+
 ## Contributing
 - Contributions are welcome, please for the love of god someone make this code actully look pretty
 
