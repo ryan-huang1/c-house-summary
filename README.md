@@ -1,5 +1,5 @@
 ## Overview
-The application periodically retrieves messages from a server, identifies specific commands (like /summary), and then uses OpenAI's GPT-4 model to generate summaries of these discussions. The summarized content is either printed for logging or sent back to a server. 
+Detects "/summary", sends all messages after the message the /summary message replys to, to be summarized
 
 ## Server Setup: `signal-cli-rest-api`
 Before running this application, you need to set up the `signal-cli-rest-api` server. This server acts as an intermediary, handling Signal messaging operations.
