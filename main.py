@@ -84,15 +84,18 @@ def get_last_messages(limit=400):
 
 def get_messages_after(start_timestamp=None, limit=400):
     print(f"Getting messages after timestamp: {start_timestamp}")
-    query = Message.query
+    query = Message.query.with_entities(Message.source_name, Message.message)
+
     if start_timestamp:
         query = query.filter(Message.timestamp > start_timestamp)
-    query = query.order_by(Message.timestamp.asc()).limit(limit)
-    messages = query.all()
-    print(f"Retrieved {len(messages)} messages")
 
-    # Formatting messages into a human-readable string
-    formatted_messages = "\n".join([f"{msg.source_name}: {msg.message}" for msg in messages])
+    query = query.order_by(Message.timestamp.asc()).limit(limit)
+    message_tuples = query.all()
+    print(f"Retrieved {len(message_tuples)} messages")
+
+    # Formatting messages into a single string from oldest to newest
+    formatted_messages = "\n".join([f"{source_name}: {message}" for source_name, message in message_tuples])
+
     return formatted_messages
 
 def insert_message_into_db(source_number, source_name, timestamp, message, group_id):
@@ -106,7 +109,7 @@ def process_message_data(envelope, message_data):
     group_id = group_info.get('groupId', 'N/A')
 
     # Only process messages from the specified group
-    if group_id == GROUP_ID:
+    if group_id == 'XWvirHXNRRgtVdkTyZ4drvRZFEc/Vr3FhnBuz/Ungoc=':
         source_number = envelope.get('sourceNumber', 'N/A')
         source_name = envelope.get('sourceName', 'N/A')
         timestamp = envelope.get('timestamp', 'N/A')
@@ -120,8 +123,8 @@ def process_message_data(envelope, message_data):
             if quote_id:
                 # Proceed with summary generation if the message is a reply to a quote
                 last_messages = get_messages_after(quote_id)
-                formatted_messages = format_messages(last_messages)
-                gpt_summary = generate_gpt_summary(formatted_messages)
+                print("formated messages returned ")
+                gpt_summary = generate_gpt_summary(last_messages)
                 send_or_print_summary(gpt_summary)
             else:
                 # Send a response if /summary is not a reply to a message
@@ -169,15 +172,13 @@ def send_periodic_requests():
     with app.app_context():  # Push the Flask app context
         successful_requests = 0
         while True:
-            try:
-                response = requests.get(SERVER_URL_RECEIVE,
-                                        auth=(AUTH_USERNAME, AUTH_PASSWORD))
-                if response.status_code == 200:
-                    successful_requests += 1
-                    print(f"Successful requests: {successful_requests}")
-                    parse_signal_response(response.json())
-            except Exception as e:
-                print(f"Request failed: {e}")
+            response = requests.get(SERVER_URL_RECEIVE,
+                                    auth=(AUTH_USERNAME, AUTH_PASSWORD))
+            if response.status_code == 200:
+                successful_requests += 1
+                print(f"Successful requests: {successful_requests}")
+                parse_signal_response(response.json())
+
             time.sleep(10)
 
 
